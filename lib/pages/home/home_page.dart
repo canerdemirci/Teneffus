@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:teneffus/constants.dart';
 import './widgets/pomodoro_card.dart';
-import 'package:teneffus/pages/home/widgets/add_button.dart';
 import 'package:teneffus/widgets/custom_appbar.dart';
 import 'package:teneffus/Pomodoro.dart';
 
@@ -31,43 +30,24 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.of(context).size;
-
-    final addButton = SizedBox(
-        width: screenSize.width * defaultWidthRatio,
-        child: AddButton(
-          onPressed: () async {
-            await Navigator.pushNamed(context, addPomodoroPageRoute,
-                arguments: _pomodoroList);
-            setState(() {});
-          },
-        ));
-
-    final emptyStartWidget = Stack(
-      alignment: Alignment.center,
-      fit: StackFit.expand,
-      children: [
-        Positioned(
-          top: appBarBottomMargin,
-          child: addButton,
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              'assets/images/relax.svg',
-              width: 101,
-              height: 101,
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Verimli bir çalışmaya\nhazır mısınız?',
-              textAlign: TextAlign.center,
-              style: startReadyTextStyle,
-            ),
-          ],
-        ),
-      ],
+    final emptyStartWidget = Container(
+      width: double.infinity,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            'assets/images/relax.svg',
+            width: 101,
+            height: 101,
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Verimli bir çalışmaya\nhazır mısınız?',
+            textAlign: TextAlign.center,
+            style: startReadyTextStyle,
+          ),
+        ],
+      ),
     );
 
     final body = SingleChildScrollView(
@@ -75,18 +55,12 @@ class _HomePageState extends State<HomePage> {
         width: double.infinity,
         child: Column(
           children: [
-            SizedBox(height: appBarBottomMargin),
-            addButton,
-            SizedBox(height: appBarBottomMargin),
+            SizedBox(height: 20),
             Wrap(
-              alignment: _pomodoroList.length == 1
-                  ? WrapAlignment.start
-                  : WrapAlignment.center,
-              direction: Axis.horizontal,
-              spacing: 10,
-              runSpacing: 20,
+              crossAxisAlignment: WrapCrossAlignment.start,
               children: _generatePomodoroList(),
             ),
+            SizedBox(height: 50),
           ],
         ),
       ),
@@ -94,6 +68,15 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: customAppBar(appTitle, true),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await Navigator.pushNamed(context, addPomodoroPageRoute,
+              arguments: _pomodoroList);
+          setState(() {});
+        },
+        backgroundColor: Colors.grey[900],
+        child: Icon(Icons.add, color: Colors.white),
+      ),
       body: _loadingData
           ? Center(child: CircularProgressIndicator())
           : (_fatalError

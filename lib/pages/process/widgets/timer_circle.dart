@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:teneffus/constants.dart';
 
-const double startRadians = 4.71239;
-const double endRadians = 6.2831;
-
 class TimerCircle extends StatefulWidget {
+  final double size;
   final int timerMinute;
   final bool start;
   final bool isInOrder;
@@ -17,6 +15,7 @@ class TimerCircle extends StatefulWidget {
   const TimerCircle({
     Key key,
     @required this.timerMinute,
+    @required this.size,
     this.start = false,
     @required this.isInOrder,
     @required this.onFinished,
@@ -142,31 +141,43 @@ class _TimerCircleState extends State<TimerCircle>
           animPosNum: _animPosNum,
         ),
         child: Container(
-          width: MediaQuery.of(context).size.width * timerRadius,
-          height: MediaQuery.of(context).size.width * timerRadius,
+          width: widget.size,
+          height: widget.size,
           alignment: Alignment.center,
           child: !_isFinished
               ? (!_isPaused
                   ? Text(
                       '$timerCaption',
-                      style: timerCircleStyle,
+                      style: timerCircleStyle.copyWith(
+                          fontSize: widget.size / 7.083),
                     )
                   : Icon(Icons.play_circle_filled,
-                      size: 40, color: Color(0xFF464646)))
+                      size: widget.size / 4.25, color: Color(0xFF464646)))
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       '$successRate%',
-                      style: timerCircleStyle,
+                      style: timerCircleStyle.copyWith(
+                          fontSize: widget.size / 7.083),
                     ),
-                    SizedBox(height: 10),
-                    Icon(Icons.schedule),
-                    Text('${widget.timerMinute}',
-                        style: Theme.of(context).textTheme.bodyText1),
-                    Icon(Icons.pause),
-                    Text((_pauseSeconds / 60).toStringAsFixed(2),
-                        style: Theme.of(context).textTheme.bodyText1),
+                    SizedBox(height: widget.size / 17),
+                    Icon(Icons.schedule, size: widget.size / 7.083),
+                    Text(
+                      '${widget.timerMinute}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          .copyWith(fontSize: widget.size / 12.1428),
+                    ),
+                    Icon(Icons.pause, size: widget.size / 7.083),
+                    Text(
+                      (_pauseSeconds / 60).toStringAsFixed(2),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          .copyWith(fontSize: widget.size / 12.1428),
+                    ),
                   ],
                 ),
         ),
@@ -238,12 +249,12 @@ class _TimeCirclePainter extends CustomPainter {
         startRadians, redRate > endRadians ? endRadians : redRate);
 
     // Inner circle
-    _arc(canvas, paint, Colors.grey[200], size, isInOrder ? 25 : 20,
+    _arc(canvas, paint, Colors.grey[200], size, isInOrder ? 30 : 25,
         startRadians, endRadians);
 
     // Animation circles
     if (isInOrder && !isPaused)
-      _arc(canvas, paint, Colors.grey[300], size, isInOrder ? 25 : 20,
+      _arc(canvas, paint, Colors.grey[300], size, isInOrder ? 30 : 25,
           animPosNum, endRadians / 4);
   }
 

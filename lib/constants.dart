@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+final double startRadians = 4.71239;
+final double endRadians = 6.29;
+
 final double timerRadius = .47;
 final double molaRadius = .28;
+final int timerMaxSizeCarpan = 425;
 final double nextIndicatorHeight = 108;
 
 final String appTitle = 'TENEFFÜS';
@@ -43,7 +47,6 @@ final TextStyle startReadyTextStyle = TextStyle(
 
 final TextStyle timerCircleStyle = TextStyle(
   fontFamily: 'Roboto',
-  fontSize: 24,
   fontWeight: FontWeight.bold,
   color: Color(0xFF565656),
 );

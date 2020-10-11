@@ -5,6 +5,7 @@ import 'package:teneffus/constants.dart';
 
 class MolaCircle extends StatefulWidget {
   final int timerMinute;
+  final double size;
   final bool start;
   final bool isInOrder;
   final Function onFinished;
@@ -13,6 +14,7 @@ class MolaCircle extends StatefulWidget {
   const MolaCircle({
     Key key,
     @required this.timerMinute,
+    @required this.size,
     this.start = false,
     @required this.isInOrder,
     @required this.onFinished,
@@ -76,23 +78,22 @@ class _MolaCircleState extends State<MolaCircle> {
         isInOrder: widget.isInOrder,
       ),
       child: Container(
-          width: MediaQuery.of(context).size.width * molaRadius,
-          height: MediaQuery.of(context).size.width * molaRadius,
+          width: widget.size,
+          height: widget.size,
           alignment: Alignment.center,
           child: !_isFinished
               ? Text(
                   '$timerCaption',
-                  style: timerCircleStyle,
+                  style:
+                      timerCircleStyle.copyWith(fontSize: widget.size / 4.1667),
                 )
-              : Icon(Icons.check_circle, size: 30, color: Color(0xFFFFC700))),
+              : Icon(Icons.check_circle,
+                  size: widget.size / 3.3333, color: Color(0xFFFFC700))),
     );
   }
 }
 
 class _MolaCirclePainter extends CustomPainter {
-  final double _startPoint = 4.71239;
-  final double _endPoint = 6.2831;
-
   final int timerMinute;
   final int currentSecond;
   final bool isFinished;
@@ -128,11 +129,11 @@ class _MolaCirclePainter extends CustomPainter {
     paint.style = PaintingStyle.fill;
 
     // Shadow circle
-    _arc(canvas, paint, Colors.grey[400], size, 0, _startPoint, _endPoint);
+    _arc(canvas, paint, Colors.grey[400], size, 0, startRadians, endRadians);
 
     // Base circle
-    _arc(canvas, paint, Colors.grey[100], size, isInOrder ? 5 : 0, _startPoint,
-        _endPoint);
+    _arc(canvas, paint, Colors.grey[100], size, isInOrder ? 5 : 0, startRadians,
+        endRadians);
 
     // Blue progress circle
     _arc(
@@ -141,12 +142,12 @@ class _MolaCirclePainter extends CustomPainter {
         !isFinished ? Color(0xFF8BC7FF) : Color(0xFFFFC700),
         size,
         isInOrder ? 5 : 0,
-        _startPoint,
+        startRadians,
         (((timerMinute * 60) - currentSecond) / (timerMinute * 60)) *
-            _endPoint);
+            endRadians);
 
     // Inner circle
-    _arc(canvas, paint, Colors.grey[200], size, 20, _startPoint, _endPoint);
+    _arc(canvas, paint, Colors.grey[200], size, 20, startRadians, endRadians);
   }
 
   @override

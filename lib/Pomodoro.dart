@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:teneffus/helper.dart';
 
 class Pomodoro {
   final String id;
@@ -38,12 +39,8 @@ class Pomodoro {
       };
 
   int get netSure => (tur * (seT * calisma));
-  String get netSureToString => netSure % 60 == 0
-      ? '${(netSure / 60).floor()}sa'
-      : '${(netSure / 60).floor()}sa ${(netSure % 60)}dk';
+  String get netSureToString => minuteToHourStr(netSure);
   int get toplamSure =>
       netSure + (tur * ((seT - 1) * mola)) + ((tur - 1) * setMolasi);
-  String get toplamSureToString => toplamSure % 60 == 0
-      ? '${(toplamSure / 60).floor()}sa'
-      : '${(toplamSure / 60).floor()}sa ${(toplamSure % 60)}dk';
+  String get toplamSureToString => minuteToHourStr(toplamSure);
 }

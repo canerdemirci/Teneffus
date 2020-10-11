@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teneffus/Pomodoro.dart';
+import 'package:teneffus/Responsive.dart';
+import 'package:teneffus/helper.dart';
 import 'package:teneffus/pages/process/widgets/mola_circle.dart';
 import 'package:teneffus/pages/process/widgets/next_timer_indicator.dart';
 import 'package:teneffus/pages/process/widgets/timer_circle.dart';
@@ -40,7 +42,10 @@ class _ProcessPageState extends State<ProcessPage> {
                 _mola = false;
               }));
     } else {
-      Navigator.pushNamed(context, resultPageRoute);
+      Navigator.pushNamed(context, resultPageRoute, arguments: {
+        'pomodoro': widget.pomodoro,
+        'pauseSure': _pauseSure ~/ 60,
+      });
     }
   }
 
@@ -56,6 +61,8 @@ class _ProcessPageState extends State<ProcessPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isMobile = Responsive(mediaQueryData: MediaQuery.of(context)).isMobile;
+
     return Scaffold(
       appBar: customAppBar(widget.pomodoro.pomodoroAdi, false),
       body: Column(
@@ -75,7 +82,7 @@ class _ProcessPageState extends State<ProcessPage> {
               child: Container(
                 width: double.infinity,
                 child: Column(
-                  children: _buildSequence(),
+                  children: _buildSequence(isMobile),
                 ),
               ),
             ),
@@ -85,8 +92,8 @@ class _ProcessPageState extends State<ProcessPage> {
             order: _order + 1,
             tur: widget.pomodoro.tur,
             currentTur: _tur,
-            kalanSure:
-                '${((widget.pomodoro.toplamSure - _gecenSure / 60) / 60).floor()}sa ${((widget.pomodoro.toplamSure - _gecenSure / 60) % 60).floor()}dk',
+            kalanSure: minuteToHourStr(
+                widget.pomodoro.toplamSure - _gecenSure ~/ 60, true),
             gecenSure: (_gecenSure / 60).floor(),
             pauseSure: (_pauseSure / 60).floor(),
             toplamSure: widget.pomodoro.toplamSure,
@@ -96,7 +103,7 @@ class _ProcessPageState extends State<ProcessPage> {
     );
   }
 
-  List<Widget> _buildSequence() {
+  List<Widget> _buildSequence(bool isMobile) {
     List<Widget> sequence = List<Widget>();
 
     for (int i = 0; i < widget.pomodoro.seT; i++) {
@@ -105,6 +112,9 @@ class _ProcessPageState extends State<ProcessPage> {
 
       TimerCircle timerCircle = TimerCircle(
         key: Key('0$i$_tur'),
+        size: isMobile
+            ? MediaQuery.of(context).size.width * timerRadius
+            : timerMaxSizeCarpan * timerRadius,
         timerMinute: widget.pomodoro.calisma,
         start: (i == _order && !_mola) ? true : false,
         isInOrder: (i == _order && !_mola) ? true : false,
@@ -133,6 +143,9 @@ class _ProcessPageState extends State<ProcessPage> {
 
         sequence.add(MolaCircle(
             key: Key('1$i$_tur'),
+            size: isMobile
+                ? MediaQuery.of(context).size.width * molaRadius
+                : timerMaxSizeCarpan * molaRadius,
             timerMinute: mola,
             start: (i == _molaOrder && _mola) ? true : false,
             isInOrder: (i == _molaOrder && _mola) ? true : false,

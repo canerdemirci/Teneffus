@@ -315,10 +315,14 @@ class _AddPomodoroPageState extends State<AddPomodoroPage> {
         int calisma = int.parse(_pmCalismaController.text.trim());
         int mola = int.parse(_pmMolaController.text.trim());
         int setMolasi = int.parse(_pmSetMolasiController.text.trim());
+        String pomodoroAdi = _pmAdController.text.trim();
 
         Pomodoro pmd = Pomodoro(
           id: DateTime.now().toString(),
-          pomodoroAdi: _pmAdController.text.trim(),
+          pomodoroAdi: pomodoroAdi
+              .split(' ')
+              .map((str) => str[0].toUpperCase() + str.substring(1))
+              .join(' '),
           tur: tur < 1 ? 1 : tur,
           seT: seT < 1 ? 1 : seT,
           calisma: calisma < 1 ? 1 : calisma,
@@ -403,7 +407,7 @@ class _PomodoroLengthBar extends StatelessWidget {
             child: Text(
               pomodoro.netSureToString,
               style: Theme.of(context).textTheme.bodyText1.copyWith(
-                    color: Colors.red,
+                    color: Colors.grey[900],
                   ),
             ),
           ),
@@ -432,7 +436,7 @@ class _PomodoroLengthBar extends StatelessWidget {
             child: Text(
               pomodoro.toplamSureToString,
               style: Theme.of(context).textTheme.bodyText1.copyWith(
-                    color: Colors.red,
+                    color: Colors.grey[600],
                   ),
             ),
           ),

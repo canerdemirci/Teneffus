@@ -59,7 +59,8 @@ class App extends StatelessWidget {
             pomodoroList: ModalRoute.of(context).settings.arguments),
         processPageRoute: (context) =>
             ProcessPage(pomodoro: ModalRoute.of(context).settings.arguments),
-        resultPageRoute: (context) => ResultPage(),
+        resultPageRoute: (context) =>
+            ResultPage(data: ModalRoute.of(context).settings.arguments),
       },
     );
   }

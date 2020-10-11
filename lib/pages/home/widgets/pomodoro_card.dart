@@ -40,13 +40,12 @@ class PomodoroCard extends StatelessWidget {
         width: 280,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Color(0xFFF4F4F4),
-          boxShadow: [
-            BoxShadow(
-                offset: Offset(0, 5),
-                blurRadius: 3,
-                color: Colors.black.withOpacity(.2))
-          ],
+          border: Border.all(color: Colors.grey[300], width: 1),
+          gradient: LinearGradient(
+            colors: [Colors.white, Colors.grey[100]],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
