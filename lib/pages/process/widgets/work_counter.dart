@@ -110,6 +110,7 @@ class _WorkCounterState extends State<WorkCounter>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
     switch (state) {
       case AppLifecycleState.resumed:
       case AppLifecycleState.inactive:

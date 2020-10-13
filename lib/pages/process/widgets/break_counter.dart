@@ -56,6 +56,8 @@ class _BreakCounterState extends State<BreakCounter>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
     switch (state) {
       case AppLifecycleState.resumed:
       case AppLifecycleState.inactive:
