@@ -10,14 +10,14 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int calismaSuresi = data['pomodoro'].netSure;
-    int molaSuresi = data['pomodoro'].toplamSure - data['pomodoro'].netSure;
-    int gorevSuresi = data['pomodoro'].toplamSure;
-    int verimlilikYuzdesi = 100 - ((data['pauseSure'] * 100) ~/ calismaSuresi);
-    String calismaSuresiStr = minuteToHourStr(calismaSuresi);
-    String molaSuresiStr = minuteToHourStr(molaSuresi);
-    String gorevSuresiStr = minuteToHourStr(gorevSuresi);
-    String pauseSureStr = minuteToHourStr(data['pauseSure'], true);
+    int workTime = data['pomodoro'].netTime;
+    int breakTime = data['pomodoro'].totalTime - data['pomodoro'].netTime;
+    int taskTime = data['pomodoro'].totalTime;
+    int effiencyPercent = 100 - ((data['pauseTime'] * 100) ~/ workTime);
+    String workTimeStr = minuteToHourStr(workTime);
+    String breakTimeStr = minuteToHourStr(breakTime);
+    String taskTimeStr = minuteToHourStr(taskTime);
+    String pauseTimeStr = minuteToHourStr(data['pauseTime'], true);
 
     return Scaffold(
       body: SafeArea(
@@ -59,7 +59,7 @@ class ResultPage extends StatelessWidget {
                               text: 'Verimlilik: ',
                             ),
                             TextSpan(
-                              text: '$verimlilikYuzdesi%',
+                              text: '$effiencyPercent%',
                               style: TextStyle(color: Colors.red),
                             ),
                           ],
@@ -68,10 +68,10 @@ class ResultPage extends StatelessWidget {
                       SizedBox(height: 20),
                       InfoSection(
                           progressBar: ProgressBar(
-                            birinciColor: Color(0xFFFF9393),
-                            ikinciColor: Color(0xFFBCFF93),
-                            birinciYuzde: 100 - verimlilikYuzdesi,
-                            ikinciYuzde: verimlilikYuzdesi,
+                            firstColor: Color(0xFFFF9393),
+                            secondColor: Color(0xFFBCFF93),
+                            firstPercent: 100 - effiencyPercent,
+                            secondPercent: effiencyPercent,
                           ),
                           dotColors: [
                             Color(0xFFBCFF93),
@@ -86,19 +86,19 @@ class ResultPage extends StatelessWidget {
                             'Toplam Duraklatma Süresi'
                           ],
                           values: [
-                            calismaSuresiStr,
-                            pauseSureStr
+                            workTimeStr,
+                            pauseTimeStr
                           ]),
                       SizedBox(height: 20),
                       InfoSection(
                           progressBar: ProgressBar(
-                            birinciColor: Color(0xFFBCFF93),
-                            ikinciColor: Color(0xFF8BC7FF),
-                            birinciYuzde: (100 * calismaSuresi) ~/
-                                data['pomodoro'].toplamSure,
-                            ikinciYuzde: molaSuresi == 0
+                            firstColor: Color(0xFFBCFF93),
+                            secondColor: Color(0xFF8BC7FF),
+                            firstPercent:
+                                (100 * workTime) ~/ data['pomodoro'].toplamSure,
+                            secondPercent: breakTime == 0
                                 ? 0
-                                : (100 * molaSuresi) ~/
+                                : (100 * breakTime) ~/
                                     data['pomodoro'].toplamSure,
                           ),
                           dotColors: [
@@ -117,9 +117,9 @@ class ResultPage extends StatelessWidget {
                             'Görev Mola Süresi'
                           ],
                           values: [
-                            gorevSuresiStr,
-                            calismaSuresiStr,
-                            molaSuresiStr
+                            taskTimeStr,
+                            workTimeStr,
+                            breakTimeStr
                           ])
                     ],
                   ),

@@ -3,14 +3,24 @@ import 'package:flutter/material.dart';
 class ProcessBar extends StatelessWidget {
   final int order;
   final int seT;
-  final int tur;
-  final int currentTur;
-  final String kalanSure;
-  final int gecenSure;
-  final int toplamSure;
-  final int pauseSure;
+  final int tour;
+  final int currentTour;
+  final String remainingTime;
+  final int elapsedTime;
+  final int totalTime;
+  final int pauseTime;
 
-  const ProcessBar({Key key, this.order = 1, @required this.seT, this.tur = 1, @required this.currentTur, @required this.kalanSure, this.gecenSure = 0, this.pauseSure = 0, @required this.toplamSure}) : super(key: key);
+  const ProcessBar(
+      {Key key,
+      this.order = 1,
+      @required this.seT,
+      @required this.tour,
+      @required this.currentTour,
+      @required this.remainingTime,
+      this.elapsedTime = 0,
+      this.pauseTime = 0,
+      @required this.totalTime})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,26 +34,18 @@ class ProcessBar extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.keyboard_arrow_left,
-                          size: 18, color: Colors.black),
-                      Text(
-                        kalanSure,
-                        style: Theme.of(context).textTheme.bodyText1.copyWith(
-                              fontSize: 16,
-                            ),
-                      ),
-                      Icon(Icons.keyboard_arrow_right,
-                          size: 18, color: Colors.black),
-                    ],
+                  Text(
+                    'Kalan: ' + remainingTime,
+                    style: Theme.of(context).textTheme.bodyText1.copyWith(
+                          fontSize: 16,
+                        ),
                   ),
                   Row(
                     children: [
                       Icon(Icons.replay, size: 24, color: Colors.black),
                       SizedBox(width: 3),
                       Text(
-                        '$currentTur/$tur',
+                        '$currentTour/$tour',
                         style: Theme.of(context).textTheme.bodyText1.copyWith(
                               fontSize: 16,
                             ),
@@ -71,19 +73,23 @@ class ProcessBar extends StatelessWidget {
             child: Stack(
               children: [
                 LayoutBuilder(
-                  builder: (context, constraints) =>
-                  Container(
+                  builder: (context, constraints) => Container(
                     color: Color(0xFFBCFF93),
                     height: double.infinity,
-                    width: ((gecenSure * 100) / toplamSure) * constraints.maxWidth / 100,
+                    width: ((elapsedTime * 100) / totalTime) *
+                        constraints.maxWidth /
+                        100,
                   ),
                 ),
                 LayoutBuilder(
                   builder: (context, constraints) => Container(
-                  color: Color(0xFFFF9393),
-                  height: double.infinity,
-                  width: ((pauseSure * 100) / toplamSure) * constraints.maxWidth / 100,
-                ),),
+                    color: Color(0xFFFF9393),
+                    height: double.infinity,
+                    width: ((pauseTime * 100) / totalTime) *
+                        constraints.maxWidth /
+                        100,
+                  ),
+                ),
               ],
             ),
           ),

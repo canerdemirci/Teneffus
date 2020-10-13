@@ -6,6 +6,7 @@ import 'package:teneffus/constants.dart';
 import 'package:teneffus/widgets/custom_appbar.dart';
 
 import '../../Pomodoro.dart';
+import '../../Responsive.dart';
 
 class AddPomodoroPage extends StatefulWidget {
   final List<Pomodoro> pomodoroList;
@@ -21,11 +22,11 @@ class _AddPomodoroPageState extends State<AddPomodoroPage> {
   final PomodoroStorage _pomodoroStorage = PomodoroStorage();
 
   final TextEditingController _pmAdController = TextEditingController();
-  final TextEditingController _pmTurController = TextEditingController();
+  final TextEditingController _pmTourController = TextEditingController();
   final TextEditingController _pmSetController = TextEditingController();
-  final TextEditingController _pmCalismaController = TextEditingController();
-  final TextEditingController _pmMolaController = TextEditingController();
-  final TextEditingController _pmSetMolasiController = TextEditingController();
+  final TextEditingController _pmWorkController = TextEditingController();
+  final TextEditingController _pmBreakController = TextEditingController();
+  final TextEditingController _pmSetBreakController = TextEditingController();
 
   Pomodoro _pomodoro;
   String _errorMessage = '';
@@ -36,130 +37,131 @@ class _AddPomodoroPageState extends State<AddPomodoroPage> {
 
     _pomodoro = Pomodoro(
       id: 'id',
-      pomodoroAdi: 'Görevim',
-      tur: 2,
+      pomodoroName: 'Görevim',
+      tour: 2,
       seT: 4,
-      calisma: 25,
-      mola: 5,
-      setMolasi: 20,
+      workMinute: 25,
+      breakMinute: 5,
+      setBreakMinute: 20,
     );
 
-    _pmAdController.text = _pomodoro.pomodoroAdi;
+    _pmAdController.text = _pomodoro.pomodoroName;
 
-    _pmTurController
+    _pmTourController
       ..addListener(() {
-        int tur = int.tryParse(_pmTurController.text.trim()) ?? 1;
-        if (tur < 1) {
-          tur = 1;
-        _pmTurController.text = '1';
+        int tour = int.tryParse(_pmTourController.text.trim()) ?? 1;
+        if (tour < 1) {
+          tour = 1;
+          _pmTourController.text = '1';
         }
 
         _pomodoroBarChange(
           Pomodoro(
             id: '_',
-            pomodoroAdi: _pomodoro.pomodoroAdi,
-            tur: tur,
+            pomodoroName: _pomodoro.pomodoroName,
+            tour: tour,
             seT: _pomodoro.seT,
-            calisma: _pomodoro.calisma,
-            mola: _pomodoro.mola,
-            setMolasi: _pomodoro.setMolasi,
+            workMinute: _pomodoro.workMinute,
+            breakMinute: _pomodoro.breakMinute,
+            setBreakMinute: _pomodoro.setBreakMinute,
           ),
         );
       })
-      ..text = _pomodoro.tur.toString();
+      ..text = _pomodoro.tour.toString();
 
     _pmSetController
       ..addListener(() {
         int seT = int.tryParse(_pmSetController.text.trim()) ?? 1;
         if (seT < 1) {
           seT = 1;
-        _pmSetController.text = '1';
+          _pmSetController.text = '1';
         }
 
         _pomodoroBarChange(
           Pomodoro(
             id: '_',
-            pomodoroAdi: _pomodoro.pomodoroAdi,
-            tur: _pomodoro.tur,
+            pomodoroName: _pomodoro.pomodoroName,
+            tour: _pomodoro.tour,
             seT: seT,
-            calisma: _pomodoro.calisma,
-            mola: _pomodoro.mola,
-            setMolasi: _pomodoro.setMolasi,
+            workMinute: _pomodoro.workMinute,
+            breakMinute: _pomodoro.breakMinute,
+            setBreakMinute: _pomodoro.setBreakMinute,
           ),
         );
       })
       ..text = _pomodoro.seT.toString();
 
-    _pmCalismaController
+    _pmWorkController
       ..addListener(() {
-        int calisma = int.tryParse(_pmCalismaController.text.trim()) ?? 1;
-        if (calisma < 1) {
-          calisma = 1;
-        _pmCalismaController.text = '1';
+        int workMinute = int.tryParse(_pmWorkController.text.trim()) ?? 1;
+        if (workMinute < 1) {
+          workMinute = 1;
+          _pmWorkController.text = '1';
         }
 
         _pomodoroBarChange(
           Pomodoro(
             id: '_',
-            pomodoroAdi: _pomodoro.pomodoroAdi,
-            tur: _pomodoro.tur,
+            pomodoroName: _pomodoro.pomodoroName,
+            tour: _pomodoro.tour,
             seT: _pomodoro.seT,
-            calisma: calisma,
-            mola: _pomodoro.mola,
-            setMolasi: _pomodoro.setMolasi,
+            workMinute: workMinute,
+            breakMinute: _pomodoro.breakMinute,
+            setBreakMinute: _pomodoro.setBreakMinute,
           ),
         );
       })
-      ..text = _pomodoro.calisma.toString();
+      ..text = _pomodoro.workMinute.toString();
 
-    _pmMolaController
+    _pmBreakController
       ..addListener(() {
-        int mola = int.tryParse(_pmMolaController.text.trim()) ?? 1;
-        if (mola < 1) {
-          mola = 1;
-        _pmMolaController.text = '1';
+        int breakMinute = int.tryParse(_pmBreakController.text.trim()) ?? 1;
+        if (breakMinute < 1) {
+          breakMinute = 1;
+          _pmBreakController.text = '1';
         }
 
         _pomodoroBarChange(
           Pomodoro(
             id: '_',
-            pomodoroAdi: _pomodoro.pomodoroAdi,
-            tur: _pomodoro.tur,
+            pomodoroName: _pomodoro.pomodoroName,
+            tour: _pomodoro.tour,
             seT: _pomodoro.seT,
-            calisma: _pomodoro.calisma,
-            mola: mola,
-            setMolasi: _pomodoro.setMolasi,
+            workMinute: _pomodoro.workMinute,
+            breakMinute: breakMinute,
+            setBreakMinute: _pomodoro.setBreakMinute,
           ),
         );
       })
-      ..text = _pomodoro.mola.toString();
+      ..text = _pomodoro.breakMinute.toString();
 
-    _pmSetMolasiController
+    _pmSetBreakController
       ..addListener(() {
-        int setMolasi = int.tryParse(_pmSetMolasiController.text.trim()) ?? 1;
-        if (setMolasi < 1) {
-          setMolasi = 1;
-        _pmSetMolasiController.text = '1';
+        int setBreakMinute =
+            int.tryParse(_pmSetBreakController.text.trim()) ?? 1;
+        if (setBreakMinute < 1) {
+          setBreakMinute = 1;
+          _pmSetBreakController.text = '1';
         }
 
         _pomodoroBarChange(
           Pomodoro(
             id: '_',
-            pomodoroAdi: _pomodoro.pomodoroAdi,
-            tur: _pomodoro.tur,
+            pomodoroName: _pomodoro.pomodoroName,
+            tour: _pomodoro.tour,
             seT: _pomodoro.seT,
-            calisma: _pomodoro.calisma,
-            mola: _pomodoro.mola,
-            setMolasi: setMolasi,
+            workMinute: _pomodoro.workMinute,
+            breakMinute: _pomodoro.breakMinute,
+            setBreakMinute: setBreakMinute,
           ),
         );
       })
-      ..text = _pomodoro.setMolasi.toString();
+      ..text = _pomodoro.setBreakMinute.toString();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.of(context).size;
+    final responsive = Responsive(mediaQueryData: MediaQuery.of(context));
 
     var addButton = SizedBox(
       width: double.infinity,
@@ -185,7 +187,7 @@ class _AddPomodoroPageState extends State<AddPomodoroPage> {
           width: double.infinity,
           alignment: Alignment.topCenter,
           child: SizedBox(
-              width: screenSize.width * defaultWidthRatio,
+              width: responsive.screenWidth * defaultWidthRatio,
               child: Column(
                 children: [
                   SizedBox(height: appBarBottomMargin),
@@ -203,10 +205,10 @@ class _AddPomodoroPageState extends State<AddPomodoroPage> {
                     children: [
                       Expanded(
                         child: _FormItem(
-                          controller: _pmTurController,
+                          controller: _pmTourController,
                           icon: Icons.replay,
                           hint: '2',
-                          label: 'Tur',
+                          label: 'tour',
                         ),
                       ),
                       SizedBox(width: 20),
@@ -225,7 +227,7 @@ class _AddPomodoroPageState extends State<AddPomodoroPage> {
                     children: [
                       Expanded(
                         child: _FormItem(
-                          controller: _pmCalismaController,
+                          controller: _pmWorkController,
                           icon: Icons.schedule,
                           hint: '25',
                           label: 'Çalışma (dk)',
@@ -238,7 +240,7 @@ class _AddPomodoroPageState extends State<AddPomodoroPage> {
                           ? SizedBox.shrink()
                           : Expanded(
                               child: _FormItem(
-                                controller: _pmMolaController,
+                                controller: _pmBreakController,
                                 icon: Icons.pause,
                                 hint: '5',
                                 label: 'Mola (dk)',
@@ -246,18 +248,18 @@ class _AddPomodoroPageState extends State<AddPomodoroPage> {
                             ),
                     ],
                   ),
-                  _pomodoro.tur < 2
+                  _pomodoro.tour < 2
                       ? SizedBox.shrink()
                       : SizedBox(height: appBarBottomMargin),
-                  _pomodoro.tur < 2
+                  _pomodoro.tour < 2
                       ? SizedBox.shrink()
                       : _FormItem(
-                          controller: _pmSetMolasiController,
+                          controller: _pmSetBreakController,
                           icon: Icons.lock_open,
                           hint: '20',
                           label: 'Set Molası (dk)',
                         ),
-                  _pomodoro.tur < 2
+                  _pomodoro.tour < 2
                       ? SizedBox.shrink()
                       : SizedBox(height: appBarBottomMargin),
                   addButton,
@@ -309,56 +311,65 @@ class _AddPomodoroPageState extends State<AddPomodoroPage> {
     return true;
   }
 
-  void _savePomodoro(BuildContext context) async {
+  bool formControl() {
     if (!_emptyControl(controllers: [
       _pmAdController,
-      _pmTurController,
+      _pmTourController,
       _pmSetController,
-      _pmCalismaController,
-      _pmMolaController,
-      _pmSetMolasiController,
+      _pmWorkController,
+      _pmBreakController,
+      _pmSetBreakController,
     ])) {
       if (_integerControl(controllers: [
-        _pmTurController,
+        _pmTourController,
         _pmSetController,
-        _pmCalismaController,
-        _pmMolaController,
-        _pmSetMolasiController,
+        _pmWorkController,
+        _pmBreakController,
+        _pmSetBreakController,
       ])) {
-        int tur = int.parse(_pmTurController.text.trim());
-        int seT = int.parse(_pmSetController.text.trim());
-        int calisma = int.parse(_pmCalismaController.text.trim());
-        int mola = int.parse(_pmMolaController.text.trim());
-        int setMolasi = int.parse(_pmSetMolasiController.text.trim());
-        String pomodoroAdi = _pmAdController.text.trim();
+        return true;
+      }
+    }
 
-        Pomodoro pmd = Pomodoro(
-          id: DateTime.now().toString(),
-          pomodoroAdi: pomodoroAdi
-              .split(' ')
-              .map((str) => str[0].toUpperCase() + str.substring(1))
-              .join(' '),
-          tur: tur < 1 ? 1 : tur,
-          seT: seT < 1 ? 1 : seT,
-          calisma: calisma < 1 ? 1 : calisma,
-          mola: seT < 2 ? mola = 0 : (mola < 1 ? 1 : mola),
-          setMolasi: tur < 2 ? setMolasi = 0 : (setMolasi < 1 ? 1 : setMolasi),
-        );
+    return false;
+  }
 
-        widget.pomodoroList.add(pmd);
+  void _savePomodoro(BuildContext context) async {
+    if (formControl()) {
+      int tour = int.parse(_pmTourController.text.trim()).clamp(1, 99);
+      int seT = int.parse(_pmSetController.text.trim()).clamp(1, 20);
+      int workMinute = int.parse(_pmWorkController.text.trim()).clamp(1, 480);
+      int breakMinute = int.parse(_pmBreakController.text.trim()).clamp(1, 60);
+      int setBreakMinute =
+          int.parse(_pmSetBreakController.text.trim()).clamp(1, 120);
+      String pomodoroName = _pmAdController.text.trim();
 
-        List<Map> pmMaps = List<Map>();
-        widget.pomodoroList.forEach((p) => pmMaps.add(p.toJSON));
+      Pomodoro pmd = Pomodoro(
+        id: DateTime.now().toString(),
+        pomodoroName: pomodoroName
+            .split(' ')
+            .map((str) => str[0].toUpperCase() + str.substring(1))
+            .join(' '),
+        tour: tour,
+        seT: seT,
+        workMinute: workMinute,
+        breakMinute: seT < 2 ? breakMinute = 0 : breakMinute,
+        setBreakMinute: tour < 2 ? setBreakMinute = 0 : setBreakMinute,
+      );
 
-        try {
-          await _pomodoroStorage.writeData(jsonEncode(pmMaps));
-          setState(() => _errorMessage = '');
-          Navigator.pop(context);
-        } catch (error) {
-          setState(() => _errorMessage = 'Bir hata oluştu!');
-          await Future.delayed(Duration(seconds: 2));
-          Navigator.pop(context);
-        }
+      widget.pomodoroList.add(pmd);
+
+      List<Map> pmMaps = List<Map>();
+      widget.pomodoroList.forEach((p) => pmMaps.add(p.toJSON));
+
+      try {
+        await _pomodoroStorage.writeData(jsonEncode(pmMaps));
+        setState(() => _errorMessage = '');
+        Navigator.pop(context);
+      } catch (error) {
+        setState(() => _errorMessage = 'Bir hata oluştu!');
+        await Future.delayed(Duration(seconds: 2));
+        Navigator.pop(context);
       }
     }
   }
@@ -420,7 +431,7 @@ class _PomodoroLengthBar extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              pomodoro.netSureToString,
+              pomodoro.netTimeToString,
               style: Theme.of(context).textTheme.bodyText1.copyWith(
                     color: Colors.grey[900],
                   ),
@@ -437,7 +448,7 @@ class _PomodoroLengthBar extends StatelessWidget {
               builder: (context, constraints) => AnimatedContainer(
                 duration: Duration(milliseconds: 500),
                 height: constraints.maxHeight,
-                width: (pomodoro.netSure / pomodoro.toplamSure) *
+                width: (pomodoro.netTime / pomodoro.totalTime) *
                     constraints.maxWidth,
                 decoration: BoxDecoration(
                   color: Colors.grey[900],
@@ -449,7 +460,7 @@ class _PomodoroLengthBar extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              pomodoro.toplamSureToString,
+              pomodoro.totalTimeToString,
               style: Theme.of(context).textTheme.bodyText1.copyWith(
                     color: Colors.grey[600],
                   ),

@@ -3,18 +3,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:teneffus/constants.dart';
 
-class TimerCircle extends StatefulWidget {
+class WorkCounter extends StatefulWidget {
+  final int countDownMinute;
   final double size;
-  final int timerMinute;
   final bool start;
   final bool isInOrder;
   final Function onFinished;
   final Function onTick;
   final Function onPauseTick;
 
-  const TimerCircle({
+  const WorkCounter({
     Key key,
-    @required this.timerMinute,
+    @required this.countDownMinute,
     @required this.size,
     this.start = false,
     @required this.isInOrder,
@@ -24,40 +24,41 @@ class TimerCircle extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TimerCircleState createState() => _TimerCircleState();
+  _WorkCounterState createState() => _WorkCounterState();
 }
 
-class _TimerCircleState extends State<TimerCircle>
+class _WorkCounterState extends State<WorkCounter>
     with SingleTickerProviderStateMixin {
-  Timer _timer, _pauseTimer;
+  Timer _workTimer, _pauseTimer;
+  Animation<double> _animation;
+  AnimationController _animationController;
   int _seconds;
   int _pauseSeconds;
   double _animPosNum;
-
-  Animation<double> _animation;
-  AnimationController _animationController;
-
   bool _isPaused;
   bool _isFinished;
 
-  void _timerCallback(Timer tm) {
+  void _finish() {
+    _isFinished = true;
+    widget.onFinished();
+    _workTimer.cancel();
+    _pauseTimer.cancel();
+  }
+
+  void _workOnTick(Timer tm) {
     if (!_isPaused && !_isFinished)
       setState(() {
         _seconds--;
-        if (!_isFinished) widget.onTick();
-        if (_seconds == 0) {
-          _isFinished = true;
-          widget.onFinished();
-          _timer.cancel();
-        }
+        widget.onTick();
+        if (_seconds <= 0) _finish();
       });
   }
 
-  void _pauseTimerCallback(Timer tm) {
+  void _pauseOnTick(Timer tm) {
     if (_isPaused && !_isFinished)
       setState(() {
         _pauseSeconds++;
-        if (!_isFinished) widget.onPauseTick();
+        widget.onPauseTick();
       });
   }
 
@@ -84,23 +85,33 @@ class _TimerCircleState extends State<TimerCircle>
           });
   }
 
-  @override
-  void initState() {
-    super.initState();
-
-    _seconds = 0;
+  void _initCounter() {
     _pauseSeconds = 0;
     _animPosNum = 0;
     _isPaused = false;
     _isFinished = false;
+    _seconds = widget.countDownMinute * 60;
     _initAnimation();
-    _seconds = widget.timerMinute * 60;
+  }
+
+  void _onTap() {
+    if (!_isFinished && widget.start)
+      setState(() {
+        _isPaused = !_isPaused;
+      });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _initCounter();
   }
 
   @override
   void dispose() {
-    if (_timer != null && _pauseTimer != null) {
-      _timer.cancel();
+    if (_workTimer != null && _pauseTimer != null) {
+      _workTimer.cancel();
       _pauseTimer.cancel();
     }
 
@@ -111,29 +122,59 @@ class _TimerCircleState extends State<TimerCircle>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.start && _timer == null && _pauseTimer == null) {
-      _timer = Timer.periodic(Duration(seconds: 1), _timerCallback);
-      _pauseTimer = Timer.periodic(Duration(seconds: 1), _pauseTimerCallback);
+    if (widget.start && _workTimer == null && _pauseTimer == null) {
+      _workTimer = Timer.periodic(Duration(seconds: 1), _workOnTick);
+      _pauseTimer = Timer.periodic(Duration(seconds: 1), _pauseOnTick);
     }
 
-    int successRate = 100 - (_pauseSeconds * 100 ~/ (widget.timerMinute * 60));
+    int efficiencyPercent =
+        (100 - ((_pauseSeconds * 100) ~/ (widget.countDownMinute * 60)))
+            .clamp(0, 100);
     int secondToMinute = (_seconds ~/ 60);
-    int timerCaption = (secondToMinute + 1) > widget.timerMinute
+    int counterCaption = (secondToMinute + 1) > widget.countDownMinute
         ? secondToMinute
         : (secondToMinute + 1);
 
-    if (successRate < 0) successRate = 0;
+    Widget counterCaptionText = Text(
+      '$counterCaption',
+      style: timerCircleStyle.copyWith(fontSize: widget.size / 7.083),
+    );
+
+    Widget counterCaptionIcon = Icon(Icons.play_circle_filled,
+        size: widget.size / 4.25, color: Color(0xFF464646));
+
+    Widget counterResults = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          '$efficiencyPercent%',
+          style: timerCircleStyle.copyWith(fontSize: widget.size / 7.083),
+        ),
+        SizedBox(height: widget.size / 17),
+        Icon(Icons.schedule, size: widget.size / 7.083),
+        Text(
+          '${widget.countDownMinute}',
+          style: Theme.of(context)
+              .textTheme
+              .bodyText1
+              .copyWith(fontSize: widget.size / 12.1428),
+        ),
+        Icon(Icons.pause, size: widget.size / 7.083),
+        Text(
+          (_pauseSeconds / 60).toStringAsFixed(2),
+          style: Theme.of(context)
+              .textTheme
+              .bodyText1
+              .copyWith(fontSize: widget.size / 12.1428),
+        ),
+      ],
+    );
 
     return GestureDetector(
-      onTap: () {
-        if (!_isFinished && widget.start)
-          setState(() {
-            _isPaused = !_isPaused;
-          });
-      },
+      onTap: _onTap,
       child: CustomPaint(
-        painter: _TimeCirclePainter(
-          timerMinute: widget.timerMinute,
+        painter: _TimrCounterPainter(
+          countDownMinute: widget.countDownMinute,
           currentSecond: _seconds,
           pauseSecond: _pauseSeconds,
           isPaused: _isPaused,
@@ -145,58 +186,25 @@ class _TimerCircleState extends State<TimerCircle>
           height: widget.size,
           alignment: Alignment.center,
           child: !_isFinished
-              ? (!_isPaused
-                  ? Text(
-                      '$timerCaption',
-                      style: timerCircleStyle.copyWith(
-                          fontSize: widget.size / 7.083),
-                    )
-                  : Icon(Icons.play_circle_filled,
-                      size: widget.size / 4.25, color: Color(0xFF464646)))
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '$successRate%',
-                      style: timerCircleStyle.copyWith(
-                          fontSize: widget.size / 7.083),
-                    ),
-                    SizedBox(height: widget.size / 17),
-                    Icon(Icons.schedule, size: widget.size / 7.083),
-                    Text(
-                      '${widget.timerMinute}',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1
-                          .copyWith(fontSize: widget.size / 12.1428),
-                    ),
-                    Icon(Icons.pause, size: widget.size / 7.083),
-                    Text(
-                      (_pauseSeconds / 60).toStringAsFixed(2),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1
-                          .copyWith(fontSize: widget.size / 12.1428),
-                    ),
-                  ],
-                ),
+              ? (!_isPaused ? counterCaptionText : counterCaptionIcon)
+              : counterResults,
         ),
       ),
     );
   }
 }
 
-class _TimeCirclePainter extends CustomPainter {
-  final int timerMinute;
+class _TimrCounterPainter extends CustomPainter {
+  final int countDownMinute;
   final int currentSecond;
   final int pauseSecond;
   final double animPosNum;
   final bool isPaused;
   final bool isInOrder;
 
-  _TimeCirclePainter(
+  _TimrCounterPainter(
       {@required this.isInOrder,
-      @required this.timerMinute,
+      @required this.countDownMinute,
       @required this.isPaused,
       @required this.currentSecond,
       @required this.pauseSecond,
@@ -240,11 +248,11 @@ class _TimeCirclePainter extends CustomPainter {
         size,
         isInOrder ? 10 : 0,
         startRadians,
-        (((timerMinute * 60) - currentSecond) / (timerMinute * 60)) *
+        (((countDownMinute * 60) - currentSecond) / (countDownMinute * 60)) *
             endRadians);
 
     // Red progress circle
-    var redRate = endRadians * (pauseSecond / (timerMinute * 60));
+    var redRate = endRadians * (pauseSecond / (countDownMinute * 60));
     _arc(canvas, paint, Color(0xFFFF9393), size, isInOrder ? 10 : 0,
         startRadians, redRate > endRadians ? endRadians : redRate);
 

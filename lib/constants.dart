@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 final double startRadians = 4.71239;
 final double endRadians = 6.29;
 
-final double timerRadius = .47;
-final double molaRadius = .28;
-final int timerMaxSizeCarpan = 425;
-final double nextIndicatorHeight = 108;
+final double appBarBottomMargin = 20;
+final double defaultWidthRatio = .85;
 
 final String appTitle = 'TENEFFÜS';
 
+// ------------- Text Styles -------------
 final TextStyle appMainTitleStyle = TextStyle(
   fontFamily: 'Poppins',
   fontWeight: FontWeight.bold,
@@ -32,13 +31,6 @@ final TextStyle appTitleStyle = TextStyle(
   color: Colors.black,
 );
 
-final String addPomodoroPageRoute = '/addpomodoro';
-final String processPageRoute = '/process';
-final String resultPageRoute = '/result';
-
-final double appBarBottomMargin = 20;
-final double defaultWidthRatio = .85;
-
 final TextStyle startReadyTextStyle = TextStyle(
   fontFamily: 'Roboto',
   fontSize: 24,
@@ -50,13 +42,3 @@ final TextStyle timerCircleStyle = TextStyle(
   fontWeight: FontWeight.bold,
   color: Color(0xFF565656),
 );
-
-class StringAsset {
-  bool turkish;
-
-  StringAsset({@required this.turkish});
-
-  String get verimliCalisma => turkish
-      ? 'Verimli bir çalışmaya\nhazır mısınız?'
-      : 'Are you ready\nan effective working?';
-}

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:teneffus/constants.dart';
+import '../../AppRoutes.dart';
 import './widgets/pomodoro_card.dart';
 import 'package:teneffus/widgets/custom_appbar.dart';
 import 'package:teneffus/Pomodoro.dart';
@@ -66,23 +67,27 @@ class _HomePageState extends State<HomePage> {
       ),
     );
 
+    final floatingActionButton = FloatingActionButton(
+      onPressed: () async {
+        await Navigator.pushNamed(context, AppRoutes.addPomodoroPageRoute,
+            arguments: _pomodoroList);
+        setState(() {});
+      },
+      backgroundColor: Colors.grey[900],
+      child: Icon(Icons.add, color: Colors.white),
+    );
+
+    final progressBar = Center(child: CircularProgressIndicator());
+    final fatalErrorMessage = Center(
+        child: Text('Bir hata oluştu! Uygulamayı tekrar açmayı deneyin.'));
+
     return Scaffold(
       appBar: customAppBar(appTitle, true),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.pushNamed(context, addPomodoroPageRoute,
-              arguments: _pomodoroList);
-          setState(() {});
-        },
-        backgroundColor: Colors.grey[900],
-        child: Icon(Icons.add, color: Colors.white),
-      ),
+      floatingActionButton: floatingActionButton,
       body: _loadingData
-          ? Center(child: CircularProgressIndicator())
+          ? progressBar
           : (_fatalError
-              ? Center(
-                  child: Text(
-                      'Bir hata oluştu! Uygulamayı tekrar açmayı deneyin.'))
+              ? fatalErrorMessage
               : (_pomodoroList.isEmpty ? emptyStartWidget : body)),
     );
   }
@@ -90,8 +95,8 @@ class _HomePageState extends State<HomePage> {
   List<Widget> _generatePomodoroList() => _pomodoroList
       .map((p) => PomodoroCard(
           pomodoro: p,
-          onTap: () =>
-              Navigator.pushNamed(context, processPageRoute, arguments: p),
+          onTap: () => Navigator.pushNamed(context, AppRoutes.processPageRoute,
+              arguments: p),
           onLongPress: (id) => _deletePomodoro(id: id)))
       .toList()
       .reversed

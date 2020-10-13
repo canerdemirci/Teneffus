@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
 class ProgressBar extends StatelessWidget {
-  final int birinciYuzde;
-  final int ikinciYuzde;
-  final Color birinciColor;
-  final Color ikinciColor;
+  final int firstPercent;
+  final int secondPercent;
+  final Color firstColor;
+  final Color secondColor;
 
   const ProgressBar(
       {Key key,
-      @required this.birinciYuzde,
-      @required this.ikinciYuzde,
-      @required this.birinciColor,
-      @required this.ikinciColor})
+      @required this.firstPercent,
+      @required this.secondPercent,
+      @required this.firstColor,
+      @required this.secondColor})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final int birinciYuzdeFixed = birinciYuzde > 100 ? 100 : birinciYuzde;
-    final int ikinciYuzdeFixed = ikinciYuzde > 100 ? 100 : ikinciYuzde;
+    final int firstPercentFixed = firstPercent > 100 ? 100 : firstPercent;
+    final int secondPercentFixed = secondPercent > 100 ? 100 : secondPercent;
 
     return Column(
       children: [
@@ -28,9 +28,9 @@ class ProgressBar extends StatelessWidget {
             builder: (context, constraints) => Stack(
               children: [
                 Container(
-                  width: birinciYuzdeFixed * (constraints.maxWidth / 100),
+                  width: firstPercentFixed * (constraints.maxWidth / 100),
                   decoration: BoxDecoration(
-                    color: birinciColor,
+                    color: firstColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -46,9 +46,9 @@ class ProgressBar extends StatelessWidget {
             builder: (context, constraints) => Stack(
               children: [
                 Container(
-                  width: ikinciYuzdeFixed * (constraints.maxWidth / 100),
+                  width: secondPercentFixed * (constraints.maxWidth / 100),
                   decoration: BoxDecoration(
-                    color: ikinciColor,
+                    color: secondColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),

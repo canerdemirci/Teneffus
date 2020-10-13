@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teneffus/constants.dart';
+import 'package:teneffus/AppRoutes.dart';
 import 'package:teneffus/pages/addpomodoro/add_pomodoro_page.dart';
 import 'package:teneffus/pages/home/home_page.dart';
 import 'package:flutter/services.dart';
@@ -54,12 +54,12 @@ class App extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       routes: {
-        '/': (context) => HomePage(),
-        addPomodoroPageRoute: (context) => AddPomodoroPage(
+        AppRoutes.home: (context) => HomePage(),
+        AppRoutes.addPomodoroPageRoute: (context) => AddPomodoroPage(
             pomodoroList: ModalRoute.of(context).settings.arguments),
-        processPageRoute: (context) =>
+        AppRoutes.processPageRoute: (context) =>
             ProcessPage(pomodoro: ModalRoute.of(context).settings.arguments),
-        resultPageRoute: (context) =>
+        AppRoutes.resultPageRoute: (context) =>
             ResultPage(data: ModalRoute.of(context).settings.arguments),
       },
     );

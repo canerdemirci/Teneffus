@@ -51,7 +51,7 @@ class PomodoroCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              pomodoro.pomodoroAdi,
+              pomodoro.pomodoroName,
               style: Theme.of(context).textTheme.bodyText1,
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -59,9 +59,9 @@ class PomodoroCard extends StatelessWidget {
             ),
             Text(
               'Toplam: ' +
-                  pomodoro.toplamSureToString +
+                  pomodoro.totalTimeToString +
                   ' / Net: ' +
-                  pomodoro.netSureToString,
+                  pomodoro.netTimeToString,
               style: Theme.of(context).textTheme.bodyText2,
             ),
             Container(
@@ -69,13 +69,14 @@ class PomodoroCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  buildCardProp(icon: Icons.replay, value: pomodoro.tur),
+                  buildCardProp(icon: Icons.replay, value: pomodoro.tour),
                   buildCardProp(
                       icon: Icons.settings_ethernet, value: pomodoro.seT),
-                  buildCardProp(icon: Icons.schedule, value: pomodoro.calisma),
-                  buildCardProp(icon: Icons.pause, value: pomodoro.mola),
                   buildCardProp(
-                      icon: Icons.lock_open, value: pomodoro.setMolasi),
+                      icon: Icons.schedule, value: pomodoro.workMinute),
+                  buildCardProp(icon: Icons.pause, value: pomodoro.breakMinute),
+                  buildCardProp(
+                      icon: Icons.lock_open, value: pomodoro.setBreakMinute),
                 ],
               ),
             ),

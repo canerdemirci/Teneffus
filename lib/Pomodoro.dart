@@ -3,44 +3,46 @@ import 'package:teneffus/helper.dart';
 
 class Pomodoro {
   final String id;
-  final String pomodoroAdi;
-  final int tur;
+  final String pomodoroName;
+  final int tour;
   final int seT;
-  final int calisma;
-  final int mola;
-  final int setMolasi;
+  final int workMinute;
+  final int breakMinute;
+  final int setBreakMinute;
 
   Pomodoro(
       {@required this.id,
-      @required this.pomodoroAdi,
-      @required this.tur,
+      @required this.pomodoroName,
+      @required this.tour,
       @required this.seT,
-      @required this.calisma,
-      @required this.mola,
-      @required this.setMolasi});
+      @required this.workMinute,
+      @required this.breakMinute,
+      @required this.setBreakMinute});
 
   Pomodoro.fromJSON(Map<String, dynamic> json)
       : id = json['id'],
-        pomodoroAdi = json['pomodoroAdi'],
-        tur = json['tur'],
+        pomodoroName = json['pomodoroName'],
+        tour = json['tour'],
         seT = json['seT'],
-        calisma = json['calisma'],
-        mola = json['mola'],
-        setMolasi = json['setMolasi'];
+        workMinute = json['workMinute'],
+        breakMinute = json['breakMinute'],
+        setBreakMinute = json['setBreakMinute'];
 
   Map<String, dynamic> get toJSON => {
         'id': id,
-        'pomodoroAdi': pomodoroAdi,
-        'tur': tur,
+        'pomodoroName': pomodoroName,
+        'tour': tour,
         'seT': seT,
-        'calisma': calisma,
-        'mola': mola,
-        'setMolasi': setMolasi
+        'workMinute': workMinute,
+        'breakMinute': breakMinute,
+        'setBreakMinute': setBreakMinute
       };
 
-  int get netSure => (tur * (seT * calisma));
-  String get netSureToString => minuteToHourStr(netSure);
-  int get toplamSure =>
-      netSure + (tur * ((seT - 1) * mola)) + ((tur - 1) * setMolasi);
-  String get toplamSureToString => minuteToHourStr(toplamSure);
+  int get totalTime =>
+      netTime +
+      (tour * ((seT - 1) * breakMinute)) +
+      ((tour - 1) * setBreakMinute);
+  int get netTime => (tour * (seT * workMinute));
+  String get totalTimeToString => minuteToHourStr(totalTime);
+  String get netTimeToString => minuteToHourStr(netTime);
 }

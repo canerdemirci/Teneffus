@@ -7,12 +7,17 @@ class NextTimerIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final downArrows = List<Widget>.generate(3, (index) => Icon(Icons.expand_more, size: 22, color: Color(0xFFCCC9C9)));
+    final double iconSize = 22;
+    final downArrows = List<Widget>.generate(
+        3,
+        (index) =>
+            Icon(Icons.expand_more, size: iconSize, color: Color(0xFFCCC9C9)));
 
     return Column(
       children: [
         ...downArrows,
-        Icon(work ? Icons.schedule : Icons.pause, size: 22, color: Color(0xFFCCC9C9)),
+        Icon(work ? Icons.schedule : Icons.pause,
+            size: iconSize, color: Color(0xFFCCC9C9)),
       ],
     );
   }

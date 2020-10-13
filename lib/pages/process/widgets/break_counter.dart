@@ -3,17 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:teneffus/constants.dart';
 
-class MolaCircle extends StatefulWidget {
-  final int timerMinute;
+class BreakCounter extends StatefulWidget {
+  final int countDownMinute;
   final double size;
   final bool start;
   final bool isInOrder;
   final Function onFinished;
   final Function onTick;
 
-  const MolaCircle({
+  const BreakCounter({
     Key key,
-    @required this.timerMinute,
+    @required this.countDownMinute,
     @required this.size,
     this.start = false,
     @required this.isInOrder,
@@ -22,57 +22,66 @@ class MolaCircle extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MolaCircleState createState() => _MolaCircleState();
+  _BreakCounterState createState() => _BreakCounterState();
 }
 
-class _MolaCircleState extends State<MolaCircle> {
-  Timer _molaTimer;
+class _BreakCounterState extends State<BreakCounter> {
+  Timer _breakTimer;
   int _seconds;
-
   bool _isFinished;
 
-  void _timerCallback(Timer tm) {
+  void _breakOnTick(Timer tm) {
     if (!_isFinished)
       setState(() {
         _seconds--;
-        if (!_isFinished) widget.onTick();
-        if (_seconds == 0) {
+        widget.onTick();
+        if (_seconds <= 0) {
           _isFinished = true;
           widget.onFinished();
-          _molaTimer.cancel();
+          _breakTimer.cancel();
         }
       });
+  }
+
+  void _initCounter() {
+    _isFinished = false;
+    _seconds = widget.countDownMinute * 60;
   }
 
   @override
   void initState() {
     super.initState();
 
-    _seconds = 0;
-    _isFinished = false;
-    _seconds = widget.timerMinute * 60;
+    _initCounter();
   }
 
   @override
   void dispose() {
-    if (_molaTimer != null) _molaTimer.cancel();
+    if (_breakTimer != null) _breakTimer.cancel();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.start && _molaTimer == null)
-      _molaTimer = Timer.periodic(Duration(seconds: 1), _timerCallback);
+    if (widget.start && _breakTimer == null)
+      _breakTimer = Timer.periodic(Duration(seconds: 1), _breakOnTick);
 
-    int secondToMinute = (_seconds ~/ 60);
-    int timerCaption = (secondToMinute + 1) > widget.timerMinute
-        ? secondToMinute
-        : (secondToMinute + 1);
+    int secondToMinute = (_seconds ~/ 60) + 1;
+    int counterCaption = secondToMinute > widget.countDownMinute
+        ? secondToMinute - 1
+        : secondToMinute;
+
+    Widget counterCaptionText = Text(
+      '$counterCaption',
+      style: timerCircleStyle.copyWith(fontSize: widget.size / 4.1667),
+    );
+    Widget counterCaptionIcon = Icon(Icons.check_circle,
+        size: widget.size / 3.3333, color: Color(0xFFFFC700));
 
     return CustomPaint(
-      painter: _MolaCirclePainter(
-        timerMinute: widget.timerMinute,
+      painter: _BreakCounterPainter(
+        countDownMinute: widget.countDownMinute,
         currentSecond: _seconds,
         isFinished: _isFinished,
         isInOrder: widget.isInOrder,
@@ -81,26 +90,19 @@ class _MolaCircleState extends State<MolaCircle> {
           width: widget.size,
           height: widget.size,
           alignment: Alignment.center,
-          child: !_isFinished
-              ? Text(
-                  '$timerCaption',
-                  style:
-                      timerCircleStyle.copyWith(fontSize: widget.size / 4.1667),
-                )
-              : Icon(Icons.check_circle,
-                  size: widget.size / 3.3333, color: Color(0xFFFFC700))),
+          child: !_isFinished ? counterCaptionText : counterCaptionIcon),
     );
   }
 }
 
-class _MolaCirclePainter extends CustomPainter {
-  final int timerMinute;
+class _BreakCounterPainter extends CustomPainter {
+  final int countDownMinute;
   final int currentSecond;
   final bool isFinished;
   final bool isInOrder;
 
-  const _MolaCirclePainter({
-    @required this.timerMinute,
+  const _BreakCounterPainter({
+    @required this.countDownMinute,
     @required this.currentSecond,
     @required this.isFinished,
     @required this.isInOrder,
@@ -143,7 +145,7 @@ class _MolaCirclePainter extends CustomPainter {
         size,
         isInOrder ? 5 : 0,
         startRadians,
-        (((timerMinute * 60) - currentSecond) / (timerMinute * 60)) *
+        (((countDownMinute * 60) - currentSecond) / (countDownMinute * 60)) *
             endRadians);
 
     // Inner circle
