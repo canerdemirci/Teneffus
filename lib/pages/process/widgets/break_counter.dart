@@ -25,7 +25,8 @@ class BreakCounter extends StatefulWidget {
   _BreakCounterState createState() => _BreakCounterState();
 }
 
-class _BreakCounterState extends State<BreakCounter> {
+class _BreakCounterState extends State<BreakCounter>
+    with WidgetsBindingObserver {
   Timer _breakTimer;
   int _seconds;
   bool _isFinished;
@@ -48,15 +49,35 @@ class _BreakCounterState extends State<BreakCounter> {
     _seconds = widget.countDownMinute * 60;
   }
 
+  void _initTimer() {
+    if (widget.start && _breakTimer == null)
+      _breakTimer = Timer.periodic(Duration(seconds: 1), _breakOnTick);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+        setState(() {});
+        break;
+      default:
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     _initCounter();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+
     if (_breakTimer != null) _breakTimer.cancel();
 
     super.dispose();
@@ -64,8 +85,7 @@ class _BreakCounterState extends State<BreakCounter> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.start && _breakTimer == null)
-      _breakTimer = Timer.periodic(Duration(seconds: 1), _breakOnTick);
+    _initTimer();
 
     int secondToMinute = (_seconds ~/ 60) + 1;
     int counterCaption = secondToMinute > widget.countDownMinute

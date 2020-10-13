@@ -28,7 +28,7 @@ class WorkCounter extends StatefulWidget {
 }
 
 class _WorkCounterState extends State<WorkCounter>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   Timer _workTimer, _pauseTimer;
   Animation<double> _animation;
   AnimationController _animationController;
@@ -94,6 +94,13 @@ class _WorkCounterState extends State<WorkCounter>
     _initAnimation();
   }
 
+  void _initTimers() {
+    if (widget.start && _workTimer == null && _pauseTimer == null) {
+      _workTimer = Timer.periodic(Duration(seconds: 1), _workOnTick);
+      _pauseTimer = Timer.periodic(Duration(seconds: 1), _pauseOnTick);
+    }
+  }
+
   void _onTap() {
     if (!_isFinished && widget.start)
       setState(() {
@@ -102,14 +109,29 @@ class _WorkCounterState extends State<WorkCounter>
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+        setState(() {});
+        break;
+      default:
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     _initCounter();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+
     if (_workTimer != null && _pauseTimer != null) {
       _workTimer.cancel();
       _pauseTimer.cancel();
@@ -122,10 +144,7 @@ class _WorkCounterState extends State<WorkCounter>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.start && _workTimer == null && _pauseTimer == null) {
-      _workTimer = Timer.periodic(Duration(seconds: 1), _workOnTick);
-      _pauseTimer = Timer.periodic(Duration(seconds: 1), _pauseOnTick);
-    }
+    _initTimers();
 
     int efficiencyPercent =
         (100 - ((_pauseSeconds * 100) ~/ (widget.countDownMinute * 60)))
