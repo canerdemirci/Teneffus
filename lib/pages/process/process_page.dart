@@ -91,6 +91,7 @@ class _ProcessPageState extends State<ProcessPage>
             _scroll = false;
             _order = 0;
             _pauseSecond = 0;
+            _workOrder = 1;
             _tour++;
             _initCounters();
             _scrollPosition = 0;
