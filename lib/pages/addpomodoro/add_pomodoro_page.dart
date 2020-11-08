@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:teneffus/PomodoroStorage.dart';
 import 'package:teneffus/constants.dart';
 import 'package:teneffus/widgets/custom_appbar.dart';
@@ -397,6 +398,8 @@ class _FormItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
+
     return TextField(
       controller: controller,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,

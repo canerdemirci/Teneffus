@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:teneffus/helper.dart';
 import 'package:teneffus/pages/result/widgets/info_section.dart';
 import 'package:teneffus/pages/result/widgets/progress_bar.dart';
@@ -10,6 +11,8 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
+
     int workTime = data['pomodoro'].netTime;
     int breakTime = data['pomodoro'].totalTime - data['pomodoro'].netTime;
     int taskTime = data['pomodoro'].totalTime;
@@ -95,11 +98,11 @@ class ResultPage extends StatelessWidget {
                             firstColor: Color(0xFFBCFF93),
                             secondColor: Color(0xFF8BC7FF),
                             firstPercent:
-                                (100 * workTime) ~/ data['pomodoro'].toplamSure,
+                                (100 * workTime) ~/ data['pomodoro'].totalTime,
                             secondPercent: breakTime == 0
                                 ? 0
                                 : (100 * breakTime) ~/
-                                    data['pomodoro'].toplamSure,
+                                    data['pomodoro'].totalTime,
                           ),
                           dotColors: [
                             Color(0xFFCCC9C9),

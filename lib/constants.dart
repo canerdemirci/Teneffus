@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+enum CounterType {
+  workCounter,
+  breakCounter,
+  setBreakCounter,
+}
+
 final double startRadians = 4.71239;
 final double endRadians = 6.29;
 
@@ -37,7 +43,7 @@ final TextStyle startReadyTextStyle = TextStyle(
   color: Color(0xFFCCC9C9),
 );
 
-final TextStyle timerCircleStyle = TextStyle(
+final TextStyle counterCircleStyle = TextStyle(
   fontFamily: 'Roboto',
   fontWeight: FontWeight.bold,
   color: Color(0xFF565656),
