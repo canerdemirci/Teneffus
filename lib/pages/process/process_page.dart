@@ -36,8 +36,13 @@ class _ProcessPageState extends State<ProcessPage>
   int _pauseSecond = 0;
   int _elapsedPomodoroSeconds = 0;
   int _elapsedPausedSeconds = 0;
+  DateTime _backgroundTimeStamp;
+  DateTime _foregroundTimeStamp;
+  int _elapsedBackgroundPauseSeconds = 0;
+  int _elapsedBackgroundSeconds = 0;
   double _scrollPosition = 0;
   bool _scroll = false;
+  bool _isAppInBack = false;
   double _animPosNum = 0;
 
   final double _workCounterRadius = .47;
@@ -69,16 +74,61 @@ class _ProcessPageState extends State<ProcessPage>
           });
   }
 
+  void _nextTour() {
+    _scroll = false;
+    _order = 0;
+    _pauseSecond = 0;
+    _workOrder = 1;
+    _tour++;
+    _initCounters();
+    _scrollPosition = 0;
+    _seqScrollController.animateTo(0,
+        duration: Duration(milliseconds: 500), curve: Curves.linear);
+  }
+
+  void _syncCounters(int seconds) {
+    for (int i = 0; i < _counters.length; i++) {
+      if (seconds > 0) {
+        int cs = _counters[i].second;
+        _counters[i].second -= seconds;
+        if (_counters[i].second < 0) _counters[i].second = 0;
+        seconds -= cs;
+      } else if (seconds < 0) {
+        _counters[i - 1].second = -seconds;
+        break;
+      }
+    }
+
+    if (seconds > 0 && _tour < widget.pomodoro.tour - 1) {
+      _nextTour();
+      _syncCounters(seconds);
+    }
+  }
+
   void _timerOnTick(Timer timer) {
+    if (_isAppInBack) return;
+
     if (!_isPaused)
       setState(() {
-        _counters[_order].second--;
-        _elapsedPomodoroSeconds++;
+        if (_elapsedBackgroundSeconds <= 0) {
+          _counters[_order].second--;
+          _elapsedPomodoroSeconds++;
+        } else {
+          _elapsedPomodoroSeconds += _elapsedBackgroundSeconds;
+          _syncCounters(_elapsedBackgroundSeconds);
+          _elapsedBackgroundSeconds = 0;
+        }
       });
     else
       setState(() {
-        _pauseSecond++;
-        _elapsedPausedSeconds++;
+        if (_elapsedBackgroundPauseSeconds <= 0) {
+          _pauseSecond++;
+          _elapsedPausedSeconds++;
+        } else {
+          _pauseSecond += _elapsedBackgroundPauseSeconds;
+          _elapsedPausedSeconds += _elapsedBackgroundPauseSeconds;
+          _elapsedBackgroundPauseSeconds = 0;
+        }
         _counters[_order].pauseSecond = _pauseSecond;
       });
 
@@ -88,15 +138,7 @@ class _ProcessPageState extends State<ProcessPage>
           _finishProcess();
         else
           setState(() {
-            _scroll = false;
-            _order = 0;
-            _pauseSecond = 0;
-            _workOrder = 1;
-            _tour++;
-            _initCounters();
-            _scrollPosition = 0;
-            _seqScrollController.animateTo(0,
-                duration: Duration(milliseconds: 500), curve: Curves.linear);
+            _nextTour();
           });
       } else {
         setState(() {
@@ -144,17 +186,20 @@ class _ProcessPageState extends State<ProcessPage>
 
   @override
   void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    _backgroundTimeStamp = DateTime.now();
+    _foregroundTimeStamp = DateTime.now();
     _initAnimation();
     _initCounters();
     _timer = Timer.periodic(Duration(seconds: 1), _timerOnTick);
-
-    WidgetsBinding.instance.addObserver(this);
-    super.initState();
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    if (_timer != null) _timer.cancel();
+    _animationController.dispose();
 
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -162,8 +207,32 @@ class _ProcessPageState extends State<ProcessPage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (_timer != null) _timer.cancel();
-    _timer = Timer.periodic(Duration(seconds: 1), _timerOnTick);
+    if (state == AppLifecycleState.resumed)
+      setState(() {
+        _isAppInBack = false;
+        _foregroundTimeStamp = DateTime.now();
+        if (_isPaused) {
+          _elapsedBackgroundSeconds = 0;
+          _elapsedBackgroundPauseSeconds = DateTimeRange(
+                  start: _foregroundTimeStamp, end: _backgroundTimeStamp)
+              .duration
+              .inSeconds
+              .abs();
+        } else {
+          _elapsedBackgroundPauseSeconds = 0;
+          _elapsedBackgroundSeconds = DateTimeRange(
+                  start: _foregroundTimeStamp, end: _backgroundTimeStamp)
+              .duration
+              .inSeconds
+              .abs();
+        }
+      });
+    else
+      setState(() {
+        _isAppInBack = true;
+        _backgroundTimeStamp = DateTime.now();
+      });
+
     super.didChangeAppLifecycleState(state);
   }
 
